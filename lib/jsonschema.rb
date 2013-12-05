@@ -3,21 +3,27 @@
 module JSON
   class Schema
     VERSION = '2.0.2'
-    class ValueError < Exception;end
-    class Undefined;end
+    class ValueError < Exception;
+    end
+    class Undefined;
+    end
     TypesMap = {
-      "string"  => String,
-      "integer" => [Integer, Fixnum],
-      "number"  => [Integer, Float, Fixnum, Numeric],
-      "boolean" => [TrueClass, FalseClass],
-      "object"  => Hash,
-      "array"   => Array,
-      "null"    => NilClass,
-      "any"     => nil
+        "string" => String,
+        "integer" => [Integer, Fixnum],
+        "number" => [Integer, Float, Fixnum, Numeric],
+        "boolean" => [TrueClass, FalseClass],
+        "object" => Hash,
+        "array" => Array,
+        "null" => NilClass,
+        "any" => nil
     }
+    @@default_opts = {interactive: true, additional_properties: {}}
     TypesList = [String, Integer, Float, Fixnum, Numeric, TrueClass, FalseClass, Hash, Array, NilClass]
-    def initialize interactive
-      @interactive = interactive
+
+    def initialize opts
+      opts =  @@default_opts.merge(opts)
+      @interactive = opts[:interactive]
+      @additional_props = opts[:additional_properties]
       @refmap = {}
     end
 
@@ -26,7 +32,7 @@ module JSON
     end
 
     def key_path
-      keys.reject{|k| k == 'self'}.join(" > ")
+      keys.reject { |k| k == 'self' }.join(" > ")
     end
 
     def check_property value, schema, key, parent
@@ -77,23 +83,23 @@ module JSON
             if value.kind_of? Array
               if schema['items']
                 if schema['items'].kind_of?(Array)
-                  schema['items'].each_with_index {|val, index|
+                  schema['items'].each_with_index { |val, index|
                     check_property(undefined_check(value, index), schema['items'][index], index, value)
                   }
-                  if schema.include?('additionalProperties')
+                  if schema.include?('additionalProperties')  or !@additional_props
                     additional = schema['additionalProperties']
                     if additional.kind_of?(FalseClass)
                       if schema['items'].size < value.size
                         raise ValueError, "#{key_path}: There are more values in the array than are allowed by the items and additionalProperties restrictions."
                       end
                     else
-                      value.each_with_index {|val, index|
+                      value.each_with_index { |val, index|
                         check_property(undefined_check(value, index), schema['additionalProperties'], index, value)
                       }
                     end
                   end
                 else
-                  value.each_with_index {|val, index|
+                  value.each_with_index { |val, index|
                     check_property(undefined_check(value, index), schema['items'], index, value)
                   }
                 end
@@ -105,13 +111,13 @@ module JSON
                 raise ValueError, "#{key_path}: There must be a maximum of #{schema['maxItems']} in the array"
               end
             elsif schema['properties']
-              check_object(value, schema['properties'], schema['additionalProperties'])
-            elsif schema.include?('additionalProperties')
+              check_object(value, schema['properties'], schema['additionalProperties'] || @additional_props)
+            elsif schema.include?('additionalProperties') or !@additional_props
               additional = schema['additionalProperties']
               unless additional.kind_of?(TrueClass)
                 if additional.kind_of?(Hash) || additional.kind_of?(FalseClass)
                   properties = {}
-                  value.each {|k, val|
+                  value.each { |k, val|
                     if additional.kind_of?(FalseClass)
                       raise ValueError, "#{key_path}: Additional properties not defined by 'properties' are not allowed in field '#{k}'"
                     else
@@ -183,7 +189,7 @@ module JSON
 
             # enum
             if schema['enum']
-              unless(schema['enum'].detect{|enum| enum == value })
+              unless (schema['enum'].detect { |enum| enum == value })
                 raise ValueError, "#{key_path}: does not have a value in the enumeration #{schema['enum'].join(", ")}"
               end
             end
@@ -214,13 +220,13 @@ module JSON
           raise ValueError, "an object is required"
         end
 
-        object_type_def.each {|key, odef|
+        object_type_def.each { |key, odef|
           if key.index('__') != 0
             check_property(undefined_check(value, key), odef, key, value)
           end
         }
       end
-      value.each {|key, val|
+      value.each { |key, val|
         if key.index('__') != 0 && object_type_def && !object_type_def[key] && additional == false
           raise ValueError, "The property #{key_path} > #{key} is not defined in the schema and the schema does not allow additional properties"
         end
@@ -291,7 +297,7 @@ module JSON
 
     def validate instance, schema
       @tree = {
-        'self' => instance
+          'self' => instance
       }
       if schema
         check_property(instance, schema, 'self', @tree)
@@ -303,8 +309,8 @@ module JSON
     end
 
     class << self
-      def validate data, schema=nil, interactive=true
-        validator = JSON::Schema.new(interactive)
+      def validate data, schema=nil, opts={}
+        validator = JSON::Schema.new(opts)
         validator.validate(data, schema)
       end
     end
