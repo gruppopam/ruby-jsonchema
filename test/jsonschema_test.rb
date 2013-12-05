@@ -863,7 +863,7 @@ class JSONSchemaTest < Test::Unit::TestCase
                                   "prop1" => 123,
                                   "prop2" => "this is prop2",
                                   "prop3" => item
-                              }, schema2, {additional_properties: false})
+                              }, schema2)
       }
     end
     [{"test" => "blah"}, [32, 49], nil, true].each do |item|
@@ -1093,20 +1093,20 @@ class JSONSchemaTest < Test::Unit::TestCase
   end
 
   def test_additional_properties_for_array_obj
-    schema = {type: "array",
-              items: {
-                  type: "object",
-                  properties: {
-                      count: {
-                          type: "integer"
+    schema = {"type" => "array",
+              "items" => {
+                  "type" => "object",
+                  "properties" => {
+                      "count" => {
+                          "type" => "integer"
                       },
-                      mode: {
-                          type: "string"
+                      "mode" => {
+                          "type" => "string"
                       }
                   }
               }
     }
-    data = [{"count"=>6,"mode"=>"central"},{"count"=>7,"mode"=>"direct"},{"count"=>9,"mode"=>"mixed"},"test"=>'true']
+    data = [{"count" => 6, "mode" => "central", "contactPerson" => "Marco"}, {"count" => 7, "mode" => "direct"}, {"count" => 9, "mode" => "mixed"}]
     #happy_path
     assert_nothing_raised {
       JSON::Schema.validate(data, schema)

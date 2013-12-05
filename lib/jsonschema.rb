@@ -86,7 +86,7 @@ module JSON
                   schema['items'].each_with_index { |val, index|
                     check_property(undefined_check(value, index), schema['items'][index], index, value)
                   }
-                  if schema.include?('additionalProperties')  or !@additional_props
+                  if schema.include?('additionalProperties')
                     additional = schema['additionalProperties']
                     if additional.kind_of?(FalseClass)
                       if schema['items'].size < value.size
