@@ -1116,5 +1116,57 @@ class JSONSchemaTest < Test::Unit::TestCase
       JSON::Schema.validate(data, schema, {additional_properties: false})
     }
   end
+
+  def test_end_to_end
+    schema = {"type" => "array",
+              "items" =>
+                  {"type" => "object",
+                   "properties" =>
+                       {"id" => {"type" => "integer"},
+                        "lastName" => {"type" => "string"},
+                        "subCategories" =>
+                            {"type" => "array",
+                             "items" =>
+                                 {"type" => "object",
+                                  "properties" =>
+                                      {"id" => {"type" => "integer"}, "name" => {"type" => "string"}}}},
+                        "email" => {"type" => "string"},
+                        "roles" =>
+                            {"type" => "array",
+                             "items" =>
+                                 {"type" => "object",
+                                  "properties" =>
+                                      {"id" => {"type" => "integer"}, "roleName" => {"type" => "string"}}}},
+                        "userId" => {"type" => "string"},
+                        "firstName" => {"type" => "string"}}}}
+
+    data =[{
+               "id" => 51,
+               "roles" => [{"id" => 2, "roleName" => "Buyer"}],
+               "subCategories" =>
+                   [{"name" => "GRAPPE", "id" => 1001},
+                    {"name" => "WHISKY", "id" => 1002},
+                    {"name" => "LIQUORI", "id" => 1005},
+                    {"name" => "CAFFE'", "id" => 7001},
+                    {"name" => "CEREALI", "id" => 8001},
+                    {"name" => "MERENDE E TORTE", "id" => 8003},
+                    {"name" => "BISCOTTI", "id" => 8004},
+                    {"name" => "DOLCE", "id" => 9001},
+                    {"name" => "SNACK DOLCI", "id" => 10005},
+                    {"name" => "PASTA", "id" => 13001}],
+               "userId" => "MARDEGAN",
+               "firstName" => "Massimiliano",
+               "lastName" => "Mardegan",
+               "email" => "Massimiliano_Mardegan@gruppopam.it",
+               "con" => 2}]
+    #happy_path
+    assert_nothing_raised {
+      JSON::Schema.validate(data, schema)
+    }
+    #should_raise_error
+    assert_raise(JSON::Schema::ValueError) {
+      JSON::Schema.validate(data, schema, {additional_properties: false})
+    }
+  end
 end
 

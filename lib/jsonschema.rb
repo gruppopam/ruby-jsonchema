@@ -124,7 +124,7 @@ module JSON
                       check_property(val, schema['additionalProperties'], k, value)
                     end
                   }
-                else
+                elsif value.kind_of?(Hash)
                   raise ValueError, "#{key_path}: additionalProperties schema definition for field '#{}' is not an object"
                 end
               end
