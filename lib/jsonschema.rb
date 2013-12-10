@@ -51,7 +51,7 @@ module JSON
         end
 
         if value == Undefined
-          unless schema['optional']
+          if schema['required']
             raise ValueError, "#{key_path}: is missing and it is not optional"
           end
 

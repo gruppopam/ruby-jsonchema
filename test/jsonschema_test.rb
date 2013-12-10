@@ -439,7 +439,7 @@ class JSONSchemaTest < Test::Unit::TestCase
                     },
                     "subprop02" => {
                         "type" => "string",
-                        "optional" => false
+                        "required" => true
                     }
                 }
             }
@@ -555,14 +555,14 @@ class JSONSchemaTest < Test::Unit::TestCase
             },
             "prop02" => {
                 "type" => "number",
-                "optional" => true
+                "required" => false
             },
             "prop03" => {
                 "type" => "integer"
             },
             "prop04" => {
                 "type" => "boolean",
-                "optional" => false
+                "required" => true
             }
         }
     }
@@ -784,7 +784,8 @@ class JSONSchemaTest < Test::Unit::TestCase
         "items" => [
             {"type" => "integer"},
             {"type" => "string"},
-            {"type" => "boolean"}
+            {"type" => "boolean",
+             "required"=>"false"}
         ]
     }
     data1 = ["string", "another string", "mystring"]
