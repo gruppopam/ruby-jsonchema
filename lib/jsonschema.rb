@@ -264,7 +264,7 @@ module JSON
           check_property(value, type, key, parent)
         else
           unless value.kind_of? converted_fieldtype
-            raise ValueError, "#{key_path}: #{value.class} value found, but a #{type} is required"
+            raise ValueError, "#{key_path}: #{value.class} value found, but a #{type} is required" unless value.class == NilClass
           end
         end
       end

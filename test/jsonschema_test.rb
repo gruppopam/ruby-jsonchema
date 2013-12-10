@@ -687,7 +687,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "integer"})
       }
     end
-    [1.2, "bad", {"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [1.2, "bad", {"test" => "blah"}, [32, 49], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "integer"})
       }
@@ -699,7 +699,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "string"})
       }
     end
-    [1.2, 1, {"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [1.2, 1, {"test" => "blah"}, [32, 49], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "string"})
       }
@@ -711,7 +711,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "number"})
       }
     end
-    ["bad", {"test" => "blah"}, [32.42, 494242], nil, true].each do |item|
+    ["bad", {"test" => "blah"}, [32.42, 494242], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "number"})
       }
@@ -723,7 +723,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "boolean"})
       }
     end
-    [1.2, "False", {"test" => "blah"}, [32, 49], nil, 1, 0].each do |item|
+    [1.2, "False", {"test" => "blah"}, [32, 49], 1, 0].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "boolean"})
       }
@@ -735,7 +735,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "object"})
       }
     end
-    [1.2, "bad", 123, [32, 49], nil, true].each do |item|
+    [1.2, "bad", 123, [32, 49], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "object"})
       }
@@ -747,7 +747,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"type" => "array"})
       }
     end
-    [1.2, "bad", {"test" => "blah"}, 1234, nil, true].each do |item|
+    [1.2, "bad", {"test" => "blah"}, 1234, true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate(item, {"type" => "array"})
       }
@@ -844,7 +844,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate({"prop" => item}, schema1)
       }
     end
-    [1.2, "bad", {"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [1.2, "bad", {"test" => "blah"}, [32, 49], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate({"prop" => item}, schema1)
       }
@@ -867,7 +867,7 @@ class JSONSchemaTest < Test::Unit::TestCase
                               }, schema2)
       }
     end
-    [{"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [{"test" => "blah"}, [32, 49], true].each do |item|
       assert_raise(JSON::Schema::ValueError) {
         JSON::Schema.validate({
                                   "prop1" => 123,
@@ -931,7 +931,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "array"})
       }
     end
-    [1.2, "bad", {"test" => "blah"}, 1234, nil, true].each do |item|
+    [1.2, "bad", {"test" => "blah"}, 1234, true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "array"})
       }
@@ -943,7 +943,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "object"})
       }
     end
-    [1.2, "bad", 123, [32, 49], nil, true].each do |item|
+    [1.2, "bad", 123, [32, 49],  true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "object"})
       }
@@ -955,7 +955,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "boolean"})
       }
     end
-    [1.2, "False", {"test" => "blah"}, [32, 49], nil, 1, 0].each do |item|
+    [1.2, "False", {"test" => "blah"}, [32, 49], 1, 0].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "boolean"})
       }
@@ -967,7 +967,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "number"})
       }
     end
-    ["bad", {"test" => "blah"}, [32.42, 494242], nil, true].each do |item|
+    ["bad", {"test" => "blah"}, [32.42, 494242], true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "number"})
       }
@@ -979,7 +979,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "integer"})
       }
     end
-    [1.2, "bad", {"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [1.2, "bad", {"test" => "blah"}, [32, 49], true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "integer"})
       }
@@ -991,7 +991,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "string"})
       }
     end
-    [1.2, 1, {"test" => "blah"}, [32, 49], nil, true].each do |item|
+    [1.2, 1, {"test" => "blah"}, [32, 49],  true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "string"})
       }
