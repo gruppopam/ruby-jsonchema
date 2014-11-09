@@ -8,20 +8,21 @@ module JSON
     class Undefined;
     end
     TypesMap = {
-        "string" => String,
-        "integer" => [Integer, Fixnum],
-        "number" => [Integer, Float, Fixnum, Numeric],
-        "boolean" => [TrueClass, FalseClass],
-        "object" => Hash,
-        "array" => Array,
-        "null" => NilClass,
-        "any" => nil
+        'string' => String,
+        'integer' => [Integer, Fixnum],
+        'number' => [Integer, Float, Fixnum, Numeric],
+        'boolean' => [TrueClass, FalseClass],
+        'object' => Hash,
+        'array' => Array,
+        'null' => NilClass,
+        'any' => nil
     }
+    TypesMapWithFormat = {'integer,UTC_MILLISEC' => [String, Integer, Float, Fixnum, Numeric]}
     @@default_opts = {interactive: true, additional_properties: {}}
     TypesList = [String, Integer, Float, Fixnum, Numeric, TrueClass, FalseClass, Hash, Array, NilClass]
 
     def initialize opts
-      opts =  @@default_opts.merge(opts)
+      opts = @@default_opts.merge(opts)
       @interactive = opts[:interactive]
       @additional_props = opts[:additional_properties]
       @refmap = {}
@@ -32,7 +33,7 @@ module JSON
     end
 
     def key_path
-      keys.reject { |k| k == 'self' }.join(" > ")
+      keys.reject { |k| k == 'self' }.join(' > ')
     end
 
     def check_property value, schema, key, parent
@@ -57,7 +58,7 @@ module JSON
 
           # default
           if @interactive && !parent.include?(key) && !schema['default'].nil?
-            unless schema["readonly"]
+            unless schema['readonly']
               parent[key] = schema['default']
             end
           end
@@ -65,14 +66,14 @@ module JSON
 
           # type
           if schema['type']
-            check_type(value, schema['type'], key, parent)
+            check_type(value, schema['type'], key, parent, schema['format'])
           end
 
           # disallow
           if schema['disallow']
             flag = true
             begin
-              check_type(value, schema['disallow'], key, parent)
+              check_type(value, schema['disallow'], key, parent, schema['format'])
             rescue ValueError
               flag = false
             end
@@ -190,7 +191,7 @@ module JSON
             # enum
             if schema['enum']
               unless (schema['enum'].detect { |enum| enum == value })
-                raise ValueError, "#{key_path}: does not have a value in the enumeration #{schema['enum'].join(", ")}"
+                raise ValueError, "#{key_path}: does not have a value in the enumeration #{schema['enum'].join(', ')}"
               end
             end
 
@@ -217,7 +218,7 @@ module JSON
     def check_object value, object_type_def, additional
       if object_type_def.kind_of? Hash
         if !value.kind_of?(Hash) || value.kind_of?(Array)
-          raise ValueError, "an object is required"
+          raise ValueError, 'an object is required'
         end
 
         object_type_def.each { |key, odef|
@@ -243,8 +244,8 @@ module JSON
       }
     end
 
-    def check_type value, type, key, parent
-      converted_fieldtype = convert_type(type)
+    def check_type(value, type, key, parent, schema = nil)
+      converted_fieldtype = convert_type(type, schema)
       if converted_fieldtype
         if converted_fieldtype.kind_of? Array
           datavalid = false
@@ -274,9 +275,9 @@ module JSON
       value.fetch(key, Undefined)
     end
 
-    def convert_type fieldtype
+    def convert_type(fieldtype, schema= nil)
       if TypesList.include?(fieldtype) || fieldtype.kind_of?(Hash)
-        return fieldtype
+        fieldtype
       elsif fieldtype.kind_of? Array
         converted_fields = []
         fieldtype.each do |subfieldtype|
@@ -287,6 +288,12 @@ module JSON
         return nil
       else
         fieldtype = fieldtype.to_s
+        unless schema.nil?
+          key = "#{fieldtype},#{schema}"
+          if TypesMapWithFormat.include?(key)
+            return TypesMapWithFormat[key]
+          end
+        end
         if TypesMap.include?(fieldtype)
           return TypesMap[fieldtype]
         else
