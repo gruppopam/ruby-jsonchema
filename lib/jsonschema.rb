@@ -37,7 +37,7 @@ module JSON
     end
 
     def check_property value, schema, key, parent
-      if schema
+      if schema.kind_of?(Hash)
         keys.push key
 #        if @interactive && schema['readonly']
 #          raise ValueError, "#{key_path} is a readonly field , it can not be changed"
@@ -113,11 +113,13 @@ module JSON
               end
             elsif schema['properties']
               check_object(value, schema['properties'], schema['additionalProperties'] || @additional_props)
-            elsif schema.include?('additionalProperties') or !@additional_props
+            elsif schema.include?('additionalProperties') and @additional_props
               additional = schema['additionalProperties']
-              unless additional.kind_of?(TrueClass)
-                if additional.kind_of?(Hash) || additional.kind_of?(FalseClass)
-                  properties = {}
+              if additional.kind_of?(TrueClass)
+                check_property(value, schema['additionalProperties'], key, value)
+              else
+                properties = {}
+                if value.kind_of?(Hash)
                   value.each { |k, val|
                     if additional.kind_of?(FalseClass)
                       raise ValueError, "#{key_path}: Additional properties not defined by 'properties' are not allowed in field '#{k}'"
@@ -125,8 +127,6 @@ module JSON
                       check_property(val, schema['additionalProperties'], k, value)
                     end
                   }
-                elsif value.kind_of?(Hash)
-                  raise ValueError, "#{key_path}: additionalProperties schema definition for field '#{}' is not an object"
                 end
               end
             end
@@ -217,7 +217,7 @@ module JSON
 
     def check_object value, object_type_def, additional
       if object_type_def.kind_of? Hash
-        if !value.kind_of?(Hash) || value.kind_of?(Array)
+        unless value.kind_of?(Hash) || value.kind_of?(Array)
           raise ValueError, 'an object is required'
         end
 
@@ -228,15 +228,19 @@ module JSON
         }
       end
       value.each { |key, val|
-        if key.index('__') != 0 && object_type_def && !object_type_def[key] && additional == false
+        if key.index('__') != 0 && object_type_def && !object_type_def[key] && !additional
           raise ValueError, "The property #{key_path} > #{key} is not defined in the schema and the schema does not allow additional properties"
         end
         requires = object_type_def && object_type_def[key] && object_type_def[key]['requires']
         if requires && !value.include?(requires)
           raise ValueError, "The presence of the property #{key_path} > #{key} requires that #{requires} also be present"
         end
-        if object_type_def && object_type_def.kind_of?(Hash) && !object_type_def.include?(key)
-          check_property(val, additional, key, value)
+        if object_type_def && object_type_def.kind_of?(Hash)
+          if object_type_def.include?(key) && val.kind_of?(Hash)
+            check_object(val, object_type_def[key], !object_type_def[key]['additional_properties'].nil? || additional)
+          else
+            check_property(val, additional, key, value)
+          end
         end
         if !@interactive && val && val['$schema']
           check_property(val, val['$schema'], key, value)

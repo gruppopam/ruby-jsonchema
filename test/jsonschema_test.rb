@@ -785,7 +785,7 @@ class JSONSchemaTest < Test::Unit::TestCase
             {"type" => "integer"},
             {"type" => "string"},
             {"type" => "boolean",
-             "required"=>"false"}
+             "required" => "false"}
         ]
     }
     data1 = ["string", "another string", "mystring"]
@@ -879,10 +879,8 @@ class JSONSchemaTest < Test::Unit::TestCase
     schema3 = {
         "additionalProperties" => true
     }
-    [1.2, 1, {"test" => "blah"}, [32, 49], nil, true, "blah"].each do |item|
-      assert_nothing_raised {
-        JSON::Schema.validate({"prop" => item}, schema3)
-      }
+    [1.2].each do |item|
+      JSON::Schema.validate({"prop" => item}, schema3)
     end
     schema4 = {
         "additionalProperties" => false
@@ -943,7 +941,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "object"})
       }
     end
-    [1.2, "bad", 123, [32, 49],  true].each do |item|
+    [1.2, "bad", 123, [32, 49], true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "object"})
       }
@@ -991,7 +989,7 @@ class JSONSchemaTest < Test::Unit::TestCase
         JSON::Schema.validate(item, {"disallow" => "string"})
       }
     end
-    [1.2, 1, {"test" => "blah"}, [32, 49],  true].each do |item|
+    [1.2, 1, {"test" => "blah"}, [32, 49], true].each do |item|
       assert_nothing_raised {
         JSON::Schema.validate(item, {"disallow" => "string"})
       }
@@ -1084,9 +1082,9 @@ class JSONSchemaTest < Test::Unit::TestCase
                }
     }
     #happy_path
-    assert_nothing_raised {
-      JSON::Schema.validate(data, schema)
-    }
+    # assert_nothing_raised {
+    #   JSON::Schema.validate(data, schema)
+    # }
     #should_raise_error
     assert_raise(JSON::Schema::ValueError) {
       JSON::Schema.validate(data, schema, {additional_properties: false})
@@ -1168,6 +1166,717 @@ class JSONSchemaTest < Test::Unit::TestCase
     assert_raise(JSON::Schema::ValueError) {
       JSON::Schema.validate(data, schema, {additional_properties: false})
     }
+  end
+
+  def test_for_hash
+
+    schema = {
+        "type" => "object",
+        "properties" => {
+            "warn" => {
+                "type" => "object",
+                "additional_properties" => {
+                    "type" => "array"
+                }
+            },
+            "error" => {
+                "type" => "object",
+                "additional_properties" => {
+                    "type" => "array"
+                }
+            },
+            "articles" => {
+                "type" => "array",
+                "items" => {
+                    "type" => "object",
+                    "properties" => {
+                        "cluster" => {
+                            "type" => "string"
+                        },
+                        "category_name" => {
+                            "type" => "string"
+                        },
+                        "operational_status" => {
+                            "type" => "string"
+                        },
+                        "is_out_of_invoice_extra_contractual_per_piece_discount_value" => {
+                            "type" => "boolean"
+                        },
+                        "promo_mechanic_value_id" => {
+                            "type" => "integer"
+                        },
+                        "store_group_ids" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "integer"
+                            }
+                        },
+                        "toscana_promo_price" => {
+                            "type" => "number"
+                        },
+                        "pieces_per_package" => {
+                            "type" => "integer"
+                        },
+                        "inactive" => {
+                            "type" => "boolean"
+                        },
+                        "out_of_invoice_extra_contractual_per_piece_discount" => {
+                            "type" => "number"
+                        },
+                        "replenishments" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "replenishment_type" => {
+                                        "type" => "string"
+                                    },
+                                    "store_group_id" => {
+                                        "type" => "integer"
+                                    }
+                                }
+                            }
+                        },
+                        "simulated_speculative_discount" => {
+                            "type" => "number"
+                        },
+                        "sub_category_name" => {
+                            "type" => "string"
+                        },
+                        "non_ideal_net_net_cost" => {
+                            "type" => "number"
+                        },
+                        "ordered_by_assistant_notes" => {
+                            "type" => "string"
+                        },
+                        "vat" => {
+                            "type" => "number"
+                        },
+                        "simulated_canvass_discount" => {
+                            "type" => "number"
+                        },
+                        "non_ideal_net_cost" => {
+                            "type" => "number"
+                        },
+                        "buyer" => {
+                            "type" => "string"
+                        },
+                        "finalized" => {
+                            "type" => "boolean"
+                        },
+                        "aggregate_promotional_discount" => {
+                            "type" => "number"
+                        },
+                        "handling_cost" => {
+                            "type" => "number"
+                        },
+                        "similar_articles" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "category_name" => {
+                                        "type" => "string"
+                                    },
+                                    "representative_article_id" => {
+                                        "type" => "integer"
+                                    },
+                                    "similar_article_id" => {
+                                        "type" => "integer"
+                                    },
+                                    "article_weight" => {
+                                        "type" => "integer"
+                                    },
+                                    "article_unit" => {
+                                        "type" => "string"
+                                    },
+                                    "non_removable" => {
+                                        "type" => "boolean"
+                                    },
+                                    "geco_status" => {
+                                        "type" => "string"
+                                    },
+                                    "category_id" => {
+                                        "type" => "integer"
+                                    },
+                                    "sub_category_id" => {
+                                        "type" => "integer"
+                                    },
+                                    "name" => {
+                                        "type" => "string"
+                                    },
+                                    "sub_category_name" => {
+                                        "type" => "string"
+                                    },
+                                    "workbook_id" => {
+                                        "type" => "string"
+                                    },
+                                    "sub_family_id" => {
+                                        "type" => "integer"
+                                    },
+                                    "sub_family_name" => {
+                                        "type" => "string"
+                                    },
+                                    "supplier_name" => {
+                                        "type" => "string"
+                                    },
+                                    "supplier_id" => {
+                                        "type" => "integer"
+                                    }
+                                }
+                            }
+                        },
+                        "margin_value" => {
+                            "type" => "number"
+                        },
+                        "tipo_off" => {
+                            "type" => "string"
+                        },
+                        "promo_mechanic_id" => {
+                            "type" => "integer"
+                        },
+                        "margin_percentage" => {
+                            "type" => "number"
+                        },
+                        "excise" => {
+                            "type" => "number"
+                        },
+                        "created_at" => {
+                            "type" => "string"
+                        },
+                        "resolved_store_group_ids" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "integer"
+                            }
+                        },
+                        "cost_and_discounts" => {
+                            "type" => "object",
+                            "properties" => {
+                                "gross_cost" => {
+                                    "type" => "number"
+                                },
+                                "invoice_net_cost" => {
+                                    "type" => "number"
+                                },
+                                "favourable_discount_type" => {
+                                    "type" => "string"
+                                },
+                                "discounts_evaluated" => {
+                                    "type" => "array",
+                                    "items" => {
+                                        "type" => "object",
+                                        "properties" => {
+                                            "discount_details" => {
+                                                "type" => "array",
+                                                "items" => {
+                                                    "type" => "object",
+                                                    "properties" => {
+                                                        "paid_quantity" => {
+                                                            "type" => "integer"
+                                                        },
+                                                        "discount_code" => {
+                                                            "type" => "object",
+                                                            "properties" => {
+                                                                "code" => {
+                                                                    "type" => "string"
+                                                                },
+                                                                "description" => {
+                                                                    "type" => "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "percentage" => {
+                                                            "type" => "number"
+                                                        },
+                                                        "value" => {
+                                                            "type" => "number"
+                                                        },
+                                                        "free_quantity" => {
+                                                            "type" => "integer"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "discount_type" => {
+                                                "type" => "object",
+                                                "properties" => {
+                                                    "description" => {
+                                                        "type" => "string"
+                                                    },
+                                                    "type" => {
+                                                        "type" => "string"
+                                                    }
+                                                }
+                                            },
+                                            "aggregated_discount" => {
+                                                "type" => "number"
+                                            }
+                                        }
+                                    }
+                                },
+                                "excluded_discounts" => {
+                                    "type" => "array",
+                                    "items" => {
+                                        "type" => "object",
+                                        "properties" => {
+                                            "discount_details" => {
+                                                "type" => "array",
+                                                "items" => {
+                                                    "type" => "object",
+                                                    "properties" => {
+                                                        "paid_quantity" => {
+                                                            "type" => "integer"
+                                                        },
+                                                        "discount_code" => {
+                                                            "type" => "object",
+                                                            "properties" => {
+                                                                "code" => {
+                                                                    "type" => "string"
+                                                                },
+                                                                "description" => {
+                                                                    "type" => "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "percentage" => {
+                                                            "type" => "number"
+                                                        },
+                                                        "value" => {
+                                                            "type" => "number"
+                                                        },
+                                                        "free_quantity" => {
+                                                            "type" => "integer"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "discount_type" => {
+                                                "type" => "object",
+                                                "properties" => {
+                                                    "description" => {
+                                                        "type" => "string"
+                                                    },
+                                                    "type" => {
+                                                        "type" => "string"
+                                                    }
+                                                }
+                                            },
+                                            "aggregated_discount" => {
+                                                "type" => "number"
+                                            }
+                                        }
+                                    }
+                                },
+                                "entity_id" => {
+                                    "type" => "integer"
+                                },
+                                "net_cost" => {
+                                    "type" => "number"
+                                },
+                                "out_invoice_discount" => {
+                                    "type" => "object",
+                                    "properties" => {
+                                        "out_of_invoice_percent" => {
+                                            "type" => "number"
+                                        },
+                                        "end_of_year_percent" => {
+                                            "type" => "number"
+                                        }
+                                    }
+                                },
+                                "net_net_cost" => {
+                                    "type" => "number"
+                                },
+                                "supplier_cost_corrections" => {
+                                    "type" => "array",
+                                    "items" => {
+                                        "type" => "object",
+                                        "properties" => {
+                                            "percentage" => {
+                                                "type" => "number"
+                                            },
+                                            "value" => {
+                                                "type" => "number"
+                                            },
+                                            "cost_correction_code" => {
+                                                "type" => "object",
+                                                "properties" => {
+                                                    "code" => {
+                                                        "type" => "string"
+                                                    },
+                                                    "description" => {
+                                                        "type" => "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "gross_cost" => {
+                            "type" => "number"
+                        },
+                        "geco_status" => {
+                            "type" => "string"
+                        },
+                        "category_id" => {
+                            "type" => "integer"
+                        },
+                        "sale_value_excluding_vat" => {
+                            "type" => "number"
+                        },
+                        "sub_family_id" => {
+                            "type" => "integer"
+                        },
+                        "replenishment_changed" => {
+                            "type" => "boolean"
+                        },
+                        "supplier_name" => {
+                            "type" => "string"
+                        },
+                        "massification" => {
+                            "type" => "string"
+                        },
+                        "article_type" => {
+                            "type" => "string"
+                        },
+                        "department_id" => {
+                            "type" => "integer"
+                        },
+                        "simulated_promo_discount1" => {
+                            "type" => "number"
+                        },
+                        "max_price" => {
+                            "type" => "number"
+                        },
+                        "simulated_promo_discount2" => {
+                            "type" => "number"
+                        },
+                        "dc_id" => {
+                            "type" => "integer"
+                        },
+                        "toscana_starting_price" => {
+                            "type" => "number"
+                        },
+                        "sub_family_name" => {
+                            "type" => "string"
+                        },
+                        "non_ideal_promo_discount_final" => {
+                            "type" => "number"
+                        },
+                        "operational_errors" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "error_message" => {
+                                        "type" => "string"
+                                    },
+                                    "is_similar_article" => {
+                                        "type" => "boolean"
+                                    }
+                                }
+                            }
+                        },
+                        "in_invoice_contractual_discounts" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "discount_details" => {
+                                        "type" => "array",
+                                        "items" => {
+                                            "type" => "object",
+                                            "properties" => {
+                                                "paid_quantity" => {
+                                                    "type" => "integer"
+                                                },
+                                                "discount_code" => {
+                                                    "type" => "object",
+                                                    "properties" => {
+                                                        "code" => {
+                                                            "type" => "string"
+                                                        },
+                                                        "description" => {
+                                                            "type" => "string"
+                                                        }
+                                                    }
+                                                },
+                                                "percentage" => {
+                                                    "type" => "number"
+                                                },
+                                                "value" => {
+                                                    "type" => "number"
+                                                },
+                                                "free_quantity" => {
+                                                    "type" => "integer"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "discount_type" => {
+                                        "type" => "object",
+                                        "properties" => {
+                                            "description" => {
+                                                "type" => "string"
+                                            },
+                                            "type" => {
+                                                "type" => "string"
+                                            }
+                                        }
+                                    },
+                                    "aggregated_discount" => {
+                                        "type" => "number"
+                                    }
+                                }
+                            }
+                        },
+                        "sell_in_start_date" => {
+                            "type" => "integer",
+                            "format" => "UTC_MILLISEC"
+                        },
+                        "promo_discount_final" => {
+                            "type" => "number"
+                        },
+                        "notes" => {
+                            "type" => "string"
+                        },
+                        "promo_price" => {
+                            "type" => "number"
+                        },
+                        "expected_pieces" => {
+                            "type" => "integer"
+                        },
+                        "expected_packages" => {
+                            "type" => "number"
+                        },
+                        "sell_in_end_date" => {
+                            "type" => "integer",
+                            "format" => "UTC_MILLISEC"
+                        },
+                        "mode_price" => {
+                            "type" => "number"
+                        },
+                        "workbook_id" => {
+                            "type" => "string"
+                        },
+                        "aggregate_speculative_discount" => {
+                            "type" => "number"
+                        },
+                        "beneficiaries" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "integer"
+                            }
+                        },
+                        "non_ideal_invoice_net_cost" => {
+                            "type" => "number"
+                        },
+                        "sync_to_gas" => {
+                            "type" => "boolean"
+                        },
+                        "new_article" => {
+                            "type" => "boolean"
+                        },
+                        "visibility" => {
+                            "type" => "string"
+                        },
+                        "resolved_toscana_store_group_ids" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "integer"
+                            }
+                        },
+                        "price_point_type" => {
+                            "type" => "string"
+                        },
+                        "article_unit" => {
+                            "type" => "string"
+                        },
+                        "created_by" => {
+                            "type" => "string"
+                        },
+                        "tipo_off_fidelity" => {
+                            "type" => "string"
+                        },
+                        "name" => {
+                            "type" => "string"
+                        },
+                        "aggregate_canvass_discount" => {
+                            "type" => "number"
+                        },
+                        "supplier_id" => {
+                            "type" => "integer"
+                        },
+                        "transportation_cost" => {
+                            "type" => "number"
+                        },
+                        "net_net_cost" => {
+                            "type" => "number"
+                        },
+                        "mandatory_beneficiaries" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "integer"
+                            }
+                        },
+                        "invoice_net_cost" => {
+                            "type" => "number"
+                        },
+                        "geco_failure_reason" => {
+                            "type" => "string"
+                        },
+                        "simulation_price" => {
+                            "type" => "number"
+                        },
+                        "similars_count" => {
+                            "type" => "integer"
+                        },
+                        "fidelity" => {
+                            "type" => "boolean"
+                        },
+                        "non_ideal_margin_value" => {
+                            "type" => "number"
+                        },
+                        "article_id" => {
+                            "type" => "integer"
+                        },
+                        "sync_to_gas_action" => {
+                            "type" => "string"
+                        },
+                        "starting_price" => {
+                            "type" => "number"
+                        },
+                        "sub_category_id" => {
+                            "type" => "integer"
+                        },
+                        "honor_gamma_structure" => {
+                            "type" => "boolean"
+                        },
+                        "net_cost" => {
+                            "type" => "number"
+                        },
+                        "non_ideal_margin_percentage" => {
+                            "type" => "number"
+                        },
+                        "ordered_by_assistant" => {
+                            "type" => "boolean"
+                        },
+                        "non_returnable_on_promo" => {
+                            "type" => "boolean"
+                        },
+                        "effective_beneficiaries" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "string"
+                            }
+                        },
+                        "was_already_sent_to_gas" => {
+                            "type" => "boolean"
+                        },
+                        "article_weight" => {
+                            "type" => "integer"
+                        },
+                        "supplier_cost_corrections" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "percentage" => {
+                                        "type" => "number"
+                                    },
+                                    "value" => {
+                                        "type" => "number"
+                                    },
+                                    "cost_correction_code" => {
+                                        "type" => "object",
+                                        "properties" => {
+                                            "code" => {
+                                                "type" => "string"
+                                            },
+                                            "description" => {
+                                                "type" => "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "sale_value" => {
+                            "type" => "number"
+                        },
+                        "promo_mechanic_description" => {
+                            "type" => "string"
+                        },
+                        "store_booking_required" => {
+                            "type" => "boolean"
+                        },
+                        "min_price" => {
+                            "type" => "number"
+                        },
+                        "group_id" => {
+                            "type" => "integer"
+                        },
+                        "out_invoice_discounts" => {
+                            "type" => "object",
+                            "properties" => {
+                                "out_of_invoice_percent" => {
+                                    "type" => "number"
+                                },
+                                "end_of_year_percent" => {
+                                    "type" => "number"
+                                }
+                            }
+                        },
+                        "extend_assortment" => {
+                            "type" => "boolean"
+                        },
+                        "validation_errors" => {
+                            "type" => "array",
+                            "items" => {
+                                "type" => "object",
+                                "properties" => {
+                                    "error_message" => {
+                                        "type" => "string"
+                                    },
+                                    "error_type" => {
+                                        "type" => "string"
+                                    },
+                                    "error_field" => {
+                                        "type" => "string"
+                                    }
+                                }
+                            }
+                        },
+                        "merchandise_type" => {
+                            "type" => "string"
+                        }
+                    }
+                }
+            },
+            "info" => {
+                "type" => "object",
+                "additional_properties" => {
+                    "type" => "integer"
+                }
+            }
+        }
+    }
+
+    data = {
+        "info" => {
+            "total_articles" => 0,
+            "similars_added" => 0,
+            "articles_added" => 0,
+            "articles_not_added" => 1
+        },
+        "articles" => []
+    }
+
+    JSON::Schema.validate(data, schema, {additional_properties: false})
+
   end
 end
 
