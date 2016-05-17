@@ -47,6 +47,10 @@ module JSON
           @refmap[schema['id']] = schema
         end
 
+        if schema['$ref']
+          schema = @refmap[schema['$ref']]
+        end
+
         if schema['extends']
           check_property(value, schema['extends'], key, parent)
         end
