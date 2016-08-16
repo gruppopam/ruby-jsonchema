@@ -4,6 +4,79 @@ require 'pp'
 require File.dirname(__FILE__) + '/../lib/jsonschema'
 
 class JSONSchemaTest < Test::Unit::TestCase
+
+  def test_with_wadl_reference_objects
+    data1 = {
+        "$schema" => {
+            "properties" => {
+                "referenceObject" => {
+                    "type"=>"object",
+                    "$ref" => "urn:jsonschema:foo:bar:FooBar"
+                },
+                "name" => {
+                    "type" => "string"
+                },
+                "age" => {
+                    "type" => "integer",
+                    "maximum" => 125,
+                    "optional" => true
+                },
+                "someObject" => {
+                    "type"=>"object",
+                    "id"=>"urn:jsonschema:foo:bar:FooBar",
+                    "properties"=> {
+                        "designation" => "string",
+                        "location" => "string"
+                    }
+                }
+            }
+        },
+        "name" => "John Doe",
+        "age" => 30,
+        "referenceObject" => { :designation => "BA", :location => 'Chennai'},
+        "someObject" => { :designation => "Engineer", :location => 'Chennai'},
+        "type" => "object"
+    }
+    assert_nothing_raised {
+      JSON::Schema.validate(data1)
+    }
+
+    data2 = {
+        "$schema" => {
+            "properties" => {
+                "referenceObject" => {
+                    "type"=>"object",
+                    "$ref" => "urn:jsonschema:foo:bar:FooBar"
+                },
+                "name" => {
+                    "type" => "string"
+                },
+                "age" => {
+                    "type" => "integer",
+                    "maximum" => 125,
+                    "optional" => true
+                },
+                "someObject" => {
+                    "type"=>"object",
+                    "id"=>"urn:jsonschema:foo:bar:FooBar",
+                    "properties"=> {
+                        "designation" => "string",
+                        "location" => "string"
+                    }
+                }
+            }
+        },
+        "name" => "John Doe",
+        "age" => 30,
+        "referenceObject" => { :designation_internal => "BA", :location => 'Chennai'},
+        "someObject" => { :designation => "Engineer", :location => 'Chennai'},
+        "type" => "object"
+    }
+    assert_raise(JSON::Schema::ValueError) {
+      JSON::Schema.validate(data2)
+    }
+  end
+
   def test_self_schema
     data1 = {
         "$schema" => {

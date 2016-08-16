@@ -219,11 +219,21 @@ module JSON
       end
     end
 
+    def populate_refmap hash
+      hash.each{ |key, val|
+        if val.kind_of?(Hash) && val['id']
+          @refmap[val['id']] = val.except 'id'
+        end
+      }
+    end
+
     def check_object value, object_type_def, additional
       if object_type_def.kind_of? Hash
         if !value.kind_of?(Hash) || value.kind_of?(Array)
           raise ValueError, 'an object is required'
         end
+
+        populate_refmap object_type_def
 
         object_type_def.each { |key, odef|
           if key.index('__') != 0
